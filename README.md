@@ -43,9 +43,9 @@ Solves the "stale model" problem — models decay as data distributions shift ov
 
 | Version | Period | Rows | Positive Rate | euribor3m | Drift Type |
 |---|---|---|---|---|---|
-| v1 | Jan–Mar | 5,000 | 11.4% | ~4.0 | Baseline |
-| v2 | Apr–Jun | 5,000 | 13.0% | ~2.8 | Mild drift — contact method shift |
-| v3 | Jul–Sep | 5,000 | 17.3% | ~1.3 | Strong drift — economic shift |
+| v1 (Jan–Mar) | 0.6397 | +0.6397 | ✅ YES |
+| v2 (Apr–Jun) | 0.7719 | +0.1322 | ✅ YES |
+| v3 (Jul–Sep) | 0.7828 | +0.0109 | ✅ YES |
 
 Each version has a unique MD5 hash for Change Data Capture (CDC).
 
