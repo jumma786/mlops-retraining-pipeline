@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+coverage.xml
+mlruns/
+data/v1/
+data/v2/
+data/v3/
+data/manifest.csv
+.env
+*.egg-info/
+.DS_Store
