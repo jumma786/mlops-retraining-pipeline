@@ -31,23 +31,25 @@ Solves the "stale model" problem — models decay as data distributions shift ov
 
 1. **Versions datasets with DVC** — every data batch has a unique MD5 hash, tracked in Git
 2. **Retrains on new data automatically** — weekly cron via GitHub Actions
-3. **Compares to previous champion** — only promotes if AUC improves ≥ threshold
+3. **Compares to previous champion** — only promotes if AUC improves >= threshold
 4. **Maintains full audit trail** — which data version trained which model, every run logged
 5. **Answers the critical question** — "which data trained which model?" — at any point in time
 
 ---
 
-## 📊 Dataset — Versioned with Drift Simulation
+## 📊 Dataset — Real UCI Bank Marketing Split by Quarter
 
-3 versioned batches simulating progressive data drift:
+3 real data batches split by month from UCI Bank Marketing (41,188 rows):
 
-| Version | Period | Rows | Positive Rate | euribor3m | Drift Type |
-|---|---|---|---|---|---|
-| v1 (Jan–Mar) | 0.6397 | +0.6397 | ✅ YES |
-| v2 (Apr–Jun) | 0.7719 | +0.1322 | ✅ YES |
-| v3 (Jul–Sep) | 0.7828 | +0.0109 | ✅ YES |
+| Version | Period | Rows | Positive Rate | Data Type |
+|---|---|---|---|---|
+| v1 | Jan, Feb, Mar | 546 | 50.5% | Real — Q1 |
+| v2 | Apr, May, Jun | 21,719 | 9.1% | Real — Q2 |
+| v3 | Jul, Aug, Sep | 13,922 | 11.2% | Real — Q3 |
 
 Each version has a unique MD5 hash for Change Data Capture (CDC).
+
+> Note: v1 has high positive rate (50.5%) because Jan-Mar had a targeted campaign in the original dataset.
 
 ---
 
@@ -57,7 +59,7 @@ Each version has a unique MD5 hash for Change Data Capture (CDC).
 mlops-retraining-pipeline/
 ├── src/
 │   ├── data/
-│   │   ├── generator.py       # Versioned data generation with drift simulation
+│   │   ├── generator.py       # Real data split by month + synthetic fallback
 │   │   └── preprocessor.py    # Encoding, split, feature pipeline
 │   ├── retrain.py             # Core retraining logic — MLflow tracking + champion gate
 │   └── pipeline.py            # Full pipeline runner across all versions
@@ -66,7 +68,7 @@ mlops-retraining-pipeline/
 ├── dvc.yaml                   # DVC pipeline stages
 ├── .github/
 │   └── workflows/
-│       └── retrain.yml        # CI: test → generate → retrain → audit → gate
+│       └── retrain.yml        # CI: test -> generate -> retrain -> audit -> gate
 ├── requirements.txt
 └── Makefile
 ```
@@ -81,31 +83,28 @@ git clone https://github.com/jumma786/mlops-retraining-pipeline.git
 cd mlops-retraining-pipeline
 pip install -r requirements.txt
 
-# Run tests
-make test
-
-# Generate versioned datasets
-make generate
+# Add real data (required)
+# Copy bank-additional-full.csv to data/ folder
 
 # Run full retraining pipeline
-make pipeline
+python src/pipeline.py
 
 # View results in MLflow UI
-make mlflow-ui
-# → Open http://localhost:5000
+mlflow ui --backend-store-uri mlruns
+# Open http://localhost:5000
 ```
 
 ---
 
-## 📈 Results — Champion/Challenger Gating
+## 📈 Results — Real Data Champion/Challenger Gating
 
 | Version | AUC | Improvement | Promoted |
 |---|---|---|---|
-| v1 (baseline) | 0.5233 | +0.5233 | ✅ YES — first run |
-| v2 (mild drift) | 0.5159 | -0.0074 | ❌ NO — performance dropped |
-| v3 (strong drift) | 0.4979 | -0.0254 | ❌ NO — below threshold |
+| v1 (Jan-Mar, 546 rows) | 0.6397 | +0.6397 | YES — first run |
+| v2 (Apr-Jun, 21,719 rows) | 0.7719 | +0.1322 | YES — improved |
+| v3 (Jul-Sep, 13,922 rows) | 0.7828 | +0.0109 | YES — improved |
 
-**Key insight:** The pipeline correctly detected that retraining on drifted data (v2, v3) degraded performance — and blocked promotion automatically. This is the core value of champion/challenger gating.
+**Key insight:** All 3 versions promoted — model improves with each new real data batch. Champion AUC grew from 0.6397 to 0.7828 across quarters.
 
 ---
 
@@ -114,13 +113,13 @@ make mlflow-ui
 Every retraining run appends to `reports/audit_trail.jsonl`:
 
 ```json
-{"timestamp": "2026-06-07T14:49:30", "data_version": 1, "data_path": "data/v1/...",
- "run_id": "650174e0...", "model": "RandomForest", "roc_auc": 0.5233,
- "prev_champion_auc": 0.0, "improvement": 0.5233, "promoted": true,
- "n_train": 4000, "positive_rate": 0.114}
+{"timestamp": "2026-06-07T17:48:46", "data_version": 1,
+ "run_id": "4775bb32...", "model": "RandomForest", "roc_auc": 0.6397,
+ "prev_champion_auc": 0.5233, "improvement": 0.1164, "promoted": true,
+ "n_train": 436, "positive_rate": 0.505}
 ```
 
-Answers: *which data trained which model, when, and why it was (or wasn't) promoted.*
+Answers: which data trained which model, when, and why it was promoted.
 
 ---
 
@@ -131,9 +130,9 @@ push to main / weekly cron (Monday 06:00 UTC)
     ↓
 [Unit Tests] — 11 tests
     ↓
-[Generate Data] — 3 versioned batches with MD5 hashes
+[Generate Data] — 3 real data batches with MD5 hashes
     ↓
-[Retrain v1 → v2 → v3] — champion gate applied
+[Retrain v1 -> v2 -> v3] — champion gate applied
     ↓
 [Audit Trail] — saved as artifact (90 days)
     ↓
@@ -162,9 +161,9 @@ push to main / weekly cron (Monday 06:00 UTC)
 ## 📝 Key MLOps Concepts Demonstrated
 
 - **Data versioning** — DVC tracks every dataset with MD5 hashes
-- **Audit trail** — complete lineage: data → model → decision
+- **Audit trail** — complete lineage: data -> model -> decision
 - **Champion/challenger** — automated promotion gate (AUC improvement threshold)
-- **Drift simulation** — 3 data versions with progressive distribution shift
+- **Real data drift** — 3 quarterly batches from UCI Bank Marketing
 - **Scheduled retraining** — weekly GitHub Actions cron
 - **Change Data Capture** — MD5 hashing detects data changes
 
