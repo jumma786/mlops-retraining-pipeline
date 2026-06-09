@@ -6,7 +6,7 @@
 ![DVC](https://img.shields.io/badge/DVC-3.50-purple)
 ![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
-> **Part of the MLOps Portfolio Series** — Project 2 of 10  
+> **Part of the [MLOps Portfolio Series](https://github.com/jumma786/mlops-portfolio)** — Project 2 of 10  
 > Automated scheduled retraining pipeline with data versioning (DVC), experiment tracking (MLflow), champion/challenger gating, and full audit trail.
 
 ---
