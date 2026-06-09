@@ -145,16 +145,16 @@ push to main / weekly cron (Monday 06:00 UTC)
 
 | # | Project | Repo | Status |
 |---|---|---|---|
-| 1 | Multi-Model Tournament Pipeline | [mlops-model-tournament](https://github.com/jumma786/mlops-model-tournament) | ✅ |
-| **2** | **Scheduled Retraining + DVC + MLflow** | [mlops-retraining-pipeline](https://github.com/jumma786/mlops-retraining-pipeline) | ✅ This repo |
-| 3 | Feature Engineering as Versioned Artifact | mlops-feature-pipeline | 🔜 |
-| 4 | Hyperparameter Tuning with Optuna + MLflow | mlops-hyperparameter-tuning | 🔜 |
-| 5 | FastAPI + Docker + Cloud Run | mlops-model-serving | 🔜 |
-| 6 | Feature Store with Feast + Redis | mlops-feature-store | 🔜 |
-| 7 | Model Monitoring & Drift Detection | mlops-model-monitoring | 🔜 |
-| 8 | A/B Testing Framework | mlops-ab-testing | 🔜 |
-| 9 | Airflow Pipeline Orchestration | mlops-airflow-pipeline | 🔜 |
-| 10 | Kubernetes ML Platform | mlops-k8s-platform | 🔜 |
+| 1 | Multi-Model Tournament | [mlops-model-tournament](https://github.com/jumma786/mlops-model-tournament) | ✅ |
+| **2** | **Scheduled Retraining** | [mlops-retraining-pipeline](https://github.com/jumma786/mlops-retraining-pipeline) | ✅ This repo |
+| 3 | Feature Engineering | [mlops-feature-pipeline](https://github.com/jumma786/mlops-feature-pipeline) | ✅ |
+| 4 | Hyperparameter Tuning | [mlops-hyperparameter-tuning](https://github.com/jumma786/mlops-hyperparameter-tuning) | ✅ |
+| 5 | Model Serving | [mlops-model-serving](https://github.com/jumma786/mlops-model-serving) | ✅ |
+| 6 | Feature Store | [mlops-feature-store](https://github.com/jumma786/mlops-feature-store) | ✅ |
+| 7 | Model Monitoring | [mlops-model-monitoring](https://github.com/jumma786/mlops-model-monitoring) | ✅ |
+| 8 | A/B Testing | [mlops-ab-testing](https://github.com/jumma786/mlops-ab-testing) | ✅ |
+| 9 | Airflow Pipeline | [mlops-airflow-pipeline](https://github.com/jumma786/mlops-airflow-pipeline) | ✅ |
+| 10 | Kubernetes Platform | [mlops-k8s-platform](https://github.com/jumma786/mlops-k8s-platform) | ✅ |
 
 ---
 
